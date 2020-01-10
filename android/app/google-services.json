@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "220433733806",
+    "firebase_url": "https://codeiiest-app.firebaseio.com",
+    "project_id": "codeiiest-app",
+    "storage_bucket": "codeiiest-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220433733806:android:e242b1845d5987d4a0b53f",
+        "android_client_info": {
+          "package_name": "org.sarbik.codeiiest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220433733806-safi32d58pgm7brvn81viu7rlmngbqf6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.sarbik.codeiiest",
+            "certificate_hash": "e40aa13384d258cf3eef8add2d3ef717f077b96f"
+          }
+        },
+        {
+          "client_id": "220433733806-po0u29ruah14685qgj1mukpfeho5pale.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD70Bzdx0vhE1oO2-TUY-z8Zl5Rs2pb0ts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220433733806-po0u29ruah14685qgj1mukpfeho5pale.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
