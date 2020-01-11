@@ -1,48 +1,16 @@
 import 'package:codeiiest/services/auth.dart';
+import 'package:codeiiest/screens/partials/infoCard.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   final Authenticator _auth = Authenticator();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        title: Row(
-          children: <Widget>[
-            Text(
-              'Home | ',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            Text(
-              ' CodeIIEST',
-              style: TextStyle(fontWeight: FontWeight.w300),
-            )
-          ],
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-          )
-        ],
-      ),
-      body: MessageHandler(),
-    );
-  }
-}
-
-class MessageHandler extends StatefulWidget {
-  @override
-  _MessageHandlerState createState() => _MessageHandlerState();
-}
-
-class _MessageHandlerState extends State<MessageHandler> {
-  // final Firestore _db = Firestore.instance;
   final FirebaseMessaging _fcm = FirebaseMessaging();
 
   @override
@@ -76,24 +44,120 @@ class _MessageHandlerState extends State<MessageHandler> {
         // TODO optional
       },
     );
-    _fcm.getToken().then((token){
-      print(token);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          FlatButton(
-              child: Text('I like web'),
-              onPressed: () => _fcm.subscribeToTopic('web')),
-          FlatButton(
-              child: Text('I hate web'),
-              onPressed: () => _fcm.unsubscribeFromTopic('web')),
-        ],
-      ),
-    );
+    return Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Drawer Header',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.message),
+                title: Text('Messages'),
+              ),
+              ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text('Logout'),
+                onTap: () async {
+                  await _auth.signOut();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Settings'),
+              ),
+            ],
+          ),
+        ),
+        body: StreamBuilder(
+          stream: Firestore.instance.collection('sessions').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Text("Loading..");
+            }
+            return SingleChildScrollView(
+              child: Container(
+                child: InfoCard(
+                  snap: snapshot.data.documents,
+                ),
+              ),
+            );
+            // return ListView.builder(
+            //   itemExtent: 80.0,
+            //   itemCount: snapshot.data.documents.length,
+            //   itemBuilder: (context, index) => InfoCard(
+            //     doc: snapshot.data.documents[index],
+            //   ),
+            // );
+          },
+        ));
   }
 }
+
+// return Container(
+//   child: Row(
+//     children: <Widget>[
+//       FlatButton(
+//           child: Text('I like web'),
+//           onPressed: () => _fcm.subscribeToTopic('web')),
+//       FlatButton(
+//           child: Text('I hate web'),
+//           onPressed: () => _fcm.unsubscribeFromTopic('web')),
+//     ],
+//   ),
+// );
+
+// CustomScrollView(
+//         slivers: <Widget>[
+//           SliverAppBar(
+//             backgroundColor: Color(0xff212121),
+//             titleSpacing: 24.0,
+//             pinned: true,
+//             expandedHeight: 160.0,
+//             title: Text(
+//               'Feed',
+//               style: TextStyle(fontSize: 36.0, color: Colors.cyan[600]),
+//             ),
+//             floating: true,
+//             flexibleSpace: FlexibleSpaceBar(
+//                 // background: Image.asset(
+//                 //   'assets/images/feed.jpg',
+//                 //   fit: BoxFit.cover,
+//                 // ),
+//                 ),
+//           ),
+//           StreamBuilder(
+//             stream: Firestore.instance.collection('sessions').snapshots(),
+//             builder: (context, snapshot) {
+//               if (!snapshot.data) {
+//                 return SliverList(
+//                   delegate: SliverChildListDelegate([Text("Loading..")]),
+//                 );
+//               }
+//               return SliverList(
+//                 delegate: SliverChildBuilderDelegate(
+//                   (context, int index) {
+//                     return InfoCard(
+//                       doc: snapshot.data.documents[index],
+//                     );
+//                   },
+//                 ),
+//               );
+//             },
+//           )
+//         ],
+//       ),
