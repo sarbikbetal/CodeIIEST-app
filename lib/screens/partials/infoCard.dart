@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:date_format/date_format.dart';
 
 class Item {
   Item({
+    this.id,
     this.expandedValue,
-    this.headerValue,
-    this.isExpanded = false,
+    this.date,
+    this.domain,
   });
 
-  String expandedValue;
-  String headerValue;
-  bool isExpanded;
+  Timestamp date;
+  int id;
+  List expandedValue;
+  String domain;
 }
 
 List<Item> _mainlist = [];
@@ -26,10 +29,12 @@ class InfoCard extends StatefulWidget {
 class _InfoCardState extends State<InfoCard> {
   @override
   void initState() {
-    widget.snap.forEach((doc) {
+    widget.snap.asMap().forEach((index, doc) {
       _mainlist.add(Item(
-        headerValue: doc['domain'],
-        expandedValue: doc['date'].toString(),
+        id: index,
+        domain: doc['domain'],
+        date: doc['date'],
+        expandedValue: doc['topics'],
       ));
     });
     super.initState();
@@ -37,29 +42,37 @@ class _InfoCardState extends State<InfoCard> {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          _mainlist[index].isExpanded = !isExpanded;
-        });
-      },
-      children: _mainlist.map<ExpansionPanel>((Item item) {
-        return ExpansionPanel(
+    return ExpansionPanelList.radio(
+      initialOpenPanelValue: 0,
+      children: _mainlist.map<ExpansionPanelRadio>((Item item) {
+        return ExpansionPanelRadio(
+          canTapOnHeader: true,
+          value: item.hashCode,
           headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text(item.headerValue),
+            return Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(item.domain),
+                  Text(formatDate(item.date.toDate(), [dd, ' ', M, ' \'', yy])),
+                ],
+              ),
             );
           },
-          body: ListTile(
-              title: Text(item.expandedValue),
-              subtitle: Text('To delete this panel, tap the trash can icon'),
-              trailing: Icon(Icons.delete),
-              onTap: () {
-                setState(() {
-                  _mainlist.removeWhere((currentItem) => item == currentItem);
-                });
-              }),
-          isExpanded: item.isExpanded,
+          body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            alignment: Alignment.centerLeft,
+            child: Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 8.0,
+              children: item.expandedValue
+                  .map((topic) => Chip(
+                        label: Text(topic),
+                      ))
+                  .toList(),
+            ),
+          ),
         );
       }).toList(),
     );
