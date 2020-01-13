@@ -14,19 +14,21 @@ class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFE0E5EC),
+        backgroundColor: Color(0xFF212121),
         appBar: AppBar(
-          backgroundColor: Colors.teal[400],
+          backgroundColor: Colors.cyan[400],
           elevation: 5.0,
           title: Row(
             children: <Widget>[
               Text(
                 'Sign In',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                    fontWeight: FontWeight.w600, color: Color(0xaa000000)),
               ),
               Text(
                 ' / CodeIIEST',
-                style: TextStyle(fontWeight: FontWeight.w300),
+                style: TextStyle(
+                    fontWeight: FontWeight.w300, color: Color(0xaa000000)),
               )
             ],
           ),
@@ -45,20 +47,6 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Container(
               margin: EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xffa3b1c6),
-                    offset: Offset(9.0, 9.0),
-                    blurRadius: 16.0,
-                  ),
-                  BoxShadow(
-                    color: Color(0xffffffff),
-                    offset: Offset(-9.0, -9.0),
-                    blurRadius: 16.0,
-                  ),
-                ],
-              ),
               child: Card(
                 color: Colors.indigo,
                 shape: RoundedRectangleBorder(

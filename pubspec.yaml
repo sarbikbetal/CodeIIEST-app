@@ -28,6 +28,7 @@ dependencies:
   flutter_signin_button: ^1.0.0
   flutter_sticky_header: ^0.4.0
   date_format: ^1.0.8
+  url_launcher: ^5.4.1
 
 dev_dependencies:
   flutter_test:

@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:codeiiest/services/auth.dart';
-// import 'package:codeiiest/screens/partials/infoCard.dart';
+import 'package:codeiiest/screens/partials/sessionCard.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_format/date_format.dart';
-
-class Events {
-  Events({
-    this.id,
-    this.expandedValue,
-    this.date,
-    this.domain,
-  });
-
-  Timestamp date;
-  int id;
-  List expandedValue;
-  String domain;
-}
+import 'package:codeiiest/models/session.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -28,7 +14,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final Authenticator _auth = Authenticator();
   final FirebaseMessaging _fcm = FirebaseMessaging();
-  List<Events> _mainlist = [];
+  List<Session> _mainlist = [];
 
   @override
   void initState() {
@@ -72,14 +58,27 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.cyan[800],
               ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Controls /',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                    ),
+                  ),
+                  Text(
+                    ' CodeIIEST',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ],
               ),
             ),
             ListTile(
@@ -108,7 +107,7 @@ class _HomeState extends State<Home> {
             pinned: true,
             expandedHeight: 160.0,
             title: Text(
-              'Dashboard',
+              '</Dashboard>',
               style: TextStyle(fontSize: 36.0, color: Colors.cyan[600]),
               textAlign: TextAlign.start,
             ),
@@ -141,8 +140,10 @@ class _HomeState extends State<Home> {
               delegate:
                   SliverChildBuilderDelegate((BuildContext context, int index) {
                 return StreamBuilder(
-                    stream:
-                        Firestore.instance.collection('sessions').snapshots(),
+                    stream: Firestore.instance
+                        .collection('sessions')
+                        .orderBy('date', descending: true)
+                        .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return Container(
@@ -153,53 +154,21 @@ class _HomeState extends State<Home> {
                       } else {
                         _mainlist.clear();
                         snapshot.data.documents.asMap().forEach((index, doc) {
-                          _mainlist.add(Events(
+                          _mainlist.add(Session(
                             id: index,
                             domain: doc['domain'],
                             date: doc['date'],
-                            expandedValue: doc['topics'],
+                            topics: doc['topics'] != null ? doc['topics'] : [],
+                            links: doc['links'] != null ? doc['links'] : [],
                           ));
                         });
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: ExpansionPanelList.radio(
-                            initialOpenPanelValue: 0,
                             children: _mainlist
-                                .map<ExpansionPanelRadio>((Events event) {
-                              return ExpansionPanelRadio(
-                                canTapOnHeader: true,
-                                value: event.hashCode,
-                                headerBuilder:
-                                    (BuildContext context, bool isExpanded) {
-                                  return Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(event.domain),
-                                        Text(formatDate(event.date.toDate(),
-                                            [dd, ' ', M, ' \'', yy])),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                body: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12.0, vertical: 8.0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Wrap(
-                                    alignment: WrapAlignment.start,
-                                    spacing: 8.0,
-                                    children: event.expandedValue
-                                        .map((topic) => Chip(
-                                              label: Text(topic),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                              );
+                                .map<ExpansionPanelRadio>((Session session) {
+                              return sessionCard(session);
                             }).toList(),
                           ),
                         );
