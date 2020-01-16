@@ -12,8 +12,14 @@ ExpansionPanelRadio sessionCard(Session session) {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: <Widget>[
-            CircleAvatar(),
-            SizedBox(width: 10.0),
+            CircleAvatar(
+              maxRadius: 16.0,
+              child: Image.asset(
+                'assets/${session.code}.png',
+              ),
+              backgroundColor: Colors.transparent,
+            ),
+            SizedBox(width: 16.0, height: 48.0,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

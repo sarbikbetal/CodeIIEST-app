@@ -7,9 +7,11 @@ class Session {
     this.date,
     this.domain,
     this.links,
+    this.code,
   });
 
   List links;
+  int code;
   Timestamp date;
   int id;
   List topics;

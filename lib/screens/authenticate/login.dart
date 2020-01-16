@@ -93,10 +93,13 @@ class _AuthenticateState extends State<Authenticate> {
                           setState(() {
                             this._isLoading = true;
                           });
-                          await _auth.signInAnon();
-                          setState(() {
-                            this._isLoading = false;
-                          });
+                          try {
+                            await _auth.signInAnon();
+                          } catch (e) {
+                            setState(() {
+                              this._isLoading = false;
+                            });
+                          }
                         },
                       )
                     ],

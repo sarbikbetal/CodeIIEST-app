@@ -5,6 +5,7 @@ import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:codeiiest/models/session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,9 +17,28 @@ class _HomeState extends State<Home> {
   final FirebaseMessaging _fcm = FirebaseMessaging();
   List<Session> _mainlist = [];
 
+  Map<String, bool> _subs = {
+    "cp": true,
+    "web": true,
+    "ml": true,
+    "security": true,
+  };
+
+  initSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _subs['cp'] = prefs.getBool('cp') ?? true;
+    _subs['web'] = prefs.getBool('web') ?? true;
+    _subs['ml'] = prefs.getBool('ml') ?? true;
+    _subs['security'] = prefs.getBool('security') ?? true;
+    this.setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
+    // Shared preferences
+    initSharedPrefs();
+    // Firebase Cloud Messaging Init
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
@@ -82,8 +102,88 @@ class _HomeState extends State<Home> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.message),
-              title: Text('Messages'),
+              leading: Icon(Icons.notifications_active),
+              title: Text('Notifications'),
+            ),
+            CheckboxListTile(
+              value: this._subs['cp'],
+              title: Padding(
+                padding: const EdgeInsets.only(left: 64.0),
+                child: const Text(
+                  'Competitive Programming',
+                  style: TextStyle(color: Color(0x99000000)),
+                ),
+              ),
+              onChanged: (bool value) async {
+                value
+                    ? _fcm.subscribeToTopic('CP')
+                    : _fcm.unsubscribeFromTopic('CP');
+                this.setState(() {
+                  this._subs['cp'] = !this._subs['cp'];
+                });
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('cp', this._subs['cp']);
+              },
+            ),
+            CheckboxListTile(
+              value: this._subs['web'],
+              title: Padding(
+                padding: const EdgeInsets.only(left: 64.0),
+                child: const Text(
+                  'Web and Open-Source',
+                  style: TextStyle(color: Color(0x99000000)),
+                ),
+              ),
+              onChanged: (bool value) async {
+                value
+                    ? _fcm.subscribeToTopic('web')
+                    : _fcm.unsubscribeFromTopic('web');
+                this.setState(() {
+                  this._subs['web'] = !this._subs['web'];
+                });
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('web', this._subs['web']);
+              },
+            ),
+            CheckboxListTile(
+              value: this._subs['ml'],
+              title: Padding(
+                padding: const EdgeInsets.only(left: 64.0),
+                child: const Text(
+                  'Machine Learning',
+                  style: TextStyle(color: Color(0x99000000)),
+                ),
+              ),
+              onChanged: (bool value) async {
+                value
+                    ? _fcm.subscribeToTopic('ML')
+                    : _fcm.unsubscribeFromTopic('ML');
+                this.setState(() {
+                  this._subs['ml'] = !this._subs['ml'];
+                });
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('ml', this._subs['ml']);
+              },
+            ),
+            CheckboxListTile(
+              value: this._subs['security'],
+              title: Padding(
+                padding: const EdgeInsets.only(left: 64.0),
+                child: const Text(
+                  'Hacking & Security',
+                  style: TextStyle(color: Color(0x99000000)),
+                ),
+              ),
+              onChanged: (bool value) async {
+                value
+                    ? _fcm.subscribeToTopic('security')
+                    : _fcm.unsubscribeFromTopic('security');
+                this.setState(() {
+                  this._subs['security'] = !this._subs['security'];
+                });
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('security', this._subs['security']);
+              },
             ),
             ListTile(
               leading: Icon(Icons.account_circle),
@@ -91,10 +191,6 @@ class _HomeState extends State<Home> {
               onTap: () async {
                 await _auth.signOut();
               },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
             ),
           ],
         ),
@@ -155,12 +251,13 @@ class _HomeState extends State<Home> {
                         _mainlist.clear();
                         snapshot.data.documents.asMap().forEach((index, doc) {
                           _mainlist.add(Session(
-                            id: index,
-                            domain: doc['domain'],
-                            date: doc['date'],
-                            topics: doc['topics'] != null ? doc['topics'] : [],
-                            links: doc['links'] != null ? doc['links'] : [],
-                          ));
+                              id: index,
+                              domain: doc['domain'],
+                              date: doc['date'],
+                              topics:
+                                  doc['topics'] != null ? doc['topics'] : [],
+                              links: doc['links'] != null ? doc['links'] : [],
+                              code: doc['code'] != null ? doc['code'] : 0));
                         });
 
                         return Padding(
