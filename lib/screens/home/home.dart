@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:codeiiest/services/auth.dart';
 import 'package:codeiiest/screens/partials/sessionCard.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -13,7 +12,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final Authenticator _auth = Authenticator();
   final FirebaseMessaging _fcm = FirebaseMessaging();
   List<Session> _mainlist = [];
 
@@ -188,9 +186,7 @@ class _HomeState extends State<Home> {
             ListTile(
               leading: Icon(Icons.account_circle),
               title: Text('Logout'),
-              onTap: () async {
-                await _auth.signOut();
-              },
+              onTap: () {},
             ),
           ],
         ),

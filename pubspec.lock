@@ -78,13 +78,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "7.2.0"
-  firebase_auth:
-    dependency: "direct main"
-    description:
-      name: firebase_auth
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.14.0+9"
   firebase_core:
     dependency: "direct main"
     description:
@@ -247,13 +240,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  provider:
-    dependency: "direct main"
-    description:
-      name: provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.2.0"
   quiver:
     dependency: transitive
     description:
