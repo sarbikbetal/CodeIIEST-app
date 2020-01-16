@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:codeiiest/screens/home/home.dart';
+import 'package:codeiiest/screens/home.dart';
 
 void main() => runApp(App());
 
