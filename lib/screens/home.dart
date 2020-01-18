@@ -183,11 +183,6 @@ class _HomeState extends State<Home> {
                 await prefs.setBool('security', this._subs['security']);
               },
             ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Logout'),
-              onTap: () {},
-            ),
           ],
         ),
       ),
